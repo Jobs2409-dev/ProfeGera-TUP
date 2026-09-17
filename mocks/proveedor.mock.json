@@ -1,0 +1,13 @@
+{
+  "razonsocial": "Tech Solutions S.A.",
+  "cuil": "20301234567",
+  "contacto": {
+    "email": "contacto@techsolutions.com",
+    "telefono": "+54 11 4567-8900"
+  },
+  "categorias": [
+    "Hardware",
+    "Servicio"
+  ],
+  "active": true
+}
