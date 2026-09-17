@@ -5,6 +5,7 @@ const usuarioSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
         lowercase: true,
         trim: true
     },
@@ -23,16 +24,11 @@ const usuarioSchema = new mongoose.Schema({
 });
 
 // Hasheo con Salt de la contraseña antes guardada del usuario.
-usuarioSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
+usuarioSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
 
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt); 
-        next();
-    } catch (error) {
-        next(error);
-    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Compara la contraseña ingresada con la almacenada en la BD.

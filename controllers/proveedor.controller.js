@@ -1,92 +1,41 @@
-import { Proveedor } from '../models/proveedor.js';
+import { Proveedor } from '../models/Proveedor.js';
 
 export const crearProveedor = async (req, res) => {
-
     try {
-        const nuevoProveedor = new Proveedor(req.body);
-        const proveedorGuardado = await nuevoProveedor.save();
-
-        res.status(201).json(proveedorGuardado);
-
+        const proveedor = await Proveedor.create(req.body);
+        res.status(201).json(proveedor);
     } catch (error) {
-        res.status(400).json(
-            { 
-                mensaje: "Error al crear", 
-                detalle: error.message
-            }
-        );
+        res.status(400).json({ mensaje: 'Error al crear el proveedor', detalle: error.message });
     }
 };
 
 export const obtenerProveedores = async (req, res) => {
     try {
-
-        const proveedores = await Proveedor.find();
+        const filtro = req.query.ciudad
+            ? { 'direccion.ciudad': req.query.ciudad }
+            : {};
+        const proveedores = await Proveedor.find(filtro);
         res.status(200).json(proveedores);
-
     } catch (error) {
-        res.status(400).json(
-            { 
-                mensaje: "error del servidor"
-            }
-        );
+        res.status(500).json({ mensaje: 'Error del servidor', detalle: error.message });
     }
 };
 
-export const obtenerProveedorPorId = async (req, res) => {
+export const actualizarCalificacion = async (req, res) => {
     try {
+        const proveedor = await Proveedor.findByIdAndUpdate(
+            req.params.id,
+            { calificacion: req.body.calificacion },
+            { new: true, runValidators: true }
+        );
 
-        const { id } = req.params;
-        const proveedor = await Proveedor.findById(id);
-
-        if(!proveedor) {
-            return res.status(404).json(
-                {
-                    mensaje: "Proveedor NO ENCONTRADO."
-                }
-            );
+        if (!proveedor) {
+            return res.status(404).json({ mensaje: 'Proveedor no encontrado' });
         }
 
         res.status(200).json(proveedor);
     } catch (error) {
-        res.status(400).json(
-            {
-                mensaje: "ID invalido"
-            }
-        );
+        res.status(400).json({ mensaje: 'Error al actualizar la calificación', detalle: error.message });
     }
 };
-
-export const actualizarProveedor = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const datosNuevos = req.body;
-
-        const proveedorActualizado = await Proveedor.findByIdAndUpdate(
-            id,
-            datosNuevos,
-            { new: true, runValidators: true}
-
-        );
-
-        if (!proveedorActualizado) {
-            return res.status(404).json(
-                {
-                    mensaje: "Proveedor no encontrado"
-                }
-            );
-        }
-
-        res.status(200).json(proveedorActualizado)
-
-    } catch (error) {
-        res.status(400).json(
-            { 
-                mensaje: "error del servidor"
-            }
-        );
-    }
-};
-
-
 
