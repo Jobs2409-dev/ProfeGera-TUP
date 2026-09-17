@@ -1,4 +1,6 @@
+// controllers/auth.controller.js
 import { Usuario } from '../models/Usuario.js';
+import jwt from 'jsonwebtoken';
 
 export const registrasUsuario = async (req, res) => {
     try {
@@ -33,3 +35,42 @@ export const registrasUsuario = async (req, res) => {
         });
     }
 };
+
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        const usuario = await Usuario.findOne({ email });
+        if(!usuario) {
+            return res.status(404).json({ mensaje: 'Credenciales inválidas.' });
+        }
+
+        const passwordCorrecto = await usuario.comparePassword(password);
+        if(!passwordCorrecto) {
+            return res.status(404).json({ mensaje: 'Credenciales inválidas.' });
+        }
+
+        const payload = {
+            id: usuario._id,
+            rol: usuario.rol
+        }
+
+        const token = jwt.sign(
+            payload, 
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRATION }
+        
+        );
+
+        res.status(200).json({
+            mensaje: 'Login exitoso',
+            token: token
+        });
+
+    } catch (error) {
+    console.error('Error detallado en login:', error);
+
+    res.status(500).json({ mensaje: 'Error en el servidor', detalle: error.message }); 
+    }
+}

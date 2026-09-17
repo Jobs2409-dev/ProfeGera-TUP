@@ -1,3 +1,4 @@
+// controllers/producto.controller.js
 import { Producto } from '../models/Producto.js';
 
 export const crearProducto = async (req, res) => {
