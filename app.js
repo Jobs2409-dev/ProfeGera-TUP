@@ -12,6 +12,9 @@ import { limitadorGlobal } from './middlewares/rateLimit.middleware.js';
 // Clase del  día 17/09
 import authRoutes from './routes/auth.routes.js';
 
+// Clase del día 01/10
+import externoRoutes from './routes/externo.routes.js';
+
 const app = express();
 
 //Middlewares globales
@@ -33,6 +36,7 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(limitadorGlobal)
 app.use(express.json());
+app.use('/api/externo/clima', externoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,3 +50,5 @@ conectarDB().then(() => {
         console.log(`Servidor Express listo en http://localhost:${PORT}`);
     });
 });
+
+// Clase del día 01/10
