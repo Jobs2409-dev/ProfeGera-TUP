@@ -1,5 +1,3 @@
-// app.js
-
 import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -22,6 +20,7 @@ import iaRoutes from './routes/ia.routes.js';
 // Clase del día 14/10 y 15/10 (SOCKET.IO Y HTTP)
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { initListenerFirebase } from './services/firebaseListener.js';
 
 const app = express();
 
@@ -55,6 +54,10 @@ io.on( 'connection', (socket) => {
         console.log(`🔴 Cliente desconectado. ID: ${socket.id}`)
     });
 });
+
+// Clase 15/10 - Inicialización del listener de Firebase pasando io como argumento
+initListenerFirebase(io);
+
 
 app.use(cors({
     origin: function(origen, callback) {
